@@ -7,13 +7,13 @@ services:
       - MYSQL_ROOT_PASSWORD=Abhijeet
       - MYSQL_DATABASE=BillingPortal
     ports:
-      - "3310:3306"
+      - "3312:3306"
 
 
   springboot-docker-container:
     image: springboot-docker-container
     ports:
-      - "3032:3030"
+      - "3034:3030"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/BillingPortal?autoReconnect=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: "root"

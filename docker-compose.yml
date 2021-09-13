@@ -1,15 +1,14 @@
 version: '3'
 services:
   mysql-standalone:
+
     image: 'mysql:5.7'
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_ROOT_PASSWORD=Abhijeet
       - MYSQL_DATABASE=BillingPortal
     ports:
       - "3307:3306"
 
-    command:
-      - --sql_mode=
 
   springboot-docker-container:
     image: springboot-docker-container
@@ -18,6 +17,8 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/BillingPortal?autoReconnect=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "1234"
+      SPRING_DATASOURCE_PASSWORD: "Abhijeet"
+    build:
+      context: "./"
     depends_on:
       - mysql-standalone

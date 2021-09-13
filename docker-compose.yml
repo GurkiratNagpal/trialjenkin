@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mysql-standalone:
+    image: 'mysql:5.7'
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=BillingPortal
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command:
+      - --sql_mode=
+
+  springboot-docker-container:
+    image: springboot-docker-container
+    ports:
+      - "3030:3030"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/BillingPortal?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "1234"
+    depends_on:
+      - mysql-standalone
+
+volumes:
+  mysql-data:

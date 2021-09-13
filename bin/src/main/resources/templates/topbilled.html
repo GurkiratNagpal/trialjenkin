@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<title>Mobile Manager</title>
+
+
+
+
+</head>
+<body>
+<div align="center">
+
+
+	
+    <h1>mobile List</h1>
+    <a href="/new">Create New mobile</a>
+    <br/><br/>
+    <table border="1" cellpadding="10">
+        <thead>
+        
+          
+        
+            <tr>
+                <th>Company ID</th>
+                <th>Company Name</th>
+                
+                 <th>One time cost</th>
+                  <th>SMS cost</th>
+                   <th>Call cost</th>
+                    <th>Data cost</th>
+                     <th>Broadband cost</th>
+                     <th>Total Cost</th>
+            
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="invoice : ${listInvoices}">
+                <td th:text="${invoice.company_id}">Company ID</td>
+                <td th:text="${invoice.companyname}">Company Name</td>
+                <td th:text="${invoice.total_sms_cost}">One time cost</td>
+                <td th:text="${invoice.total_call_cost}">SMS cost</td>
+                <td th:text="${invoice.total_data_cost}">Call cost</td>
+                <td th:text="${invoice.total_bb_cost}">Data costD</td>
+                <td th:text="${invoice.total_cost}">Broadband cost</td>
+                <td th:text="${invoice.id}">Total Cost</td>
+                
+              
+            </tr>
+        </tbody>
+    </table>
+</div>   
+</body>
+</html>

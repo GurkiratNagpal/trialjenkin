@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OauthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.Project_Login.LoginServices</a> &gt; <span class="el_source">OauthService.java</span></div><h1>OauthService.java</h1><pre class="source lang-java linenums">package com.auth.Signing.Project_Login.LoginServices;
+
+import com.auth.Signing.Exceptions.SocialDetailsInaccessible;
+import com.auth.Signing.Project_Login.Repo.UserRepository;
+import com.auth.Signing.Project_Login.entity.Provider;
+import com.auth.Signing.Project_Login.entity.User;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L15">public class OauthService {</span>
+
+<span class="fc" id="L17">    private @Getter @Setter String curremail;</span>
+    @Autowired
+    UserRepository repo;
+
+    public void processOAuthPostLogin(CustomOath2User customOath2User) throws SocialDetailsInaccessible {
+
+<span class="nc bnc" id="L23" title="All 4 branches missed.">        if (customOath2User.getEmail()==null|| customOath2User.getName()==null){</span>
+<span class="nc" id="L24">            throw new SocialDetailsInaccessible(&quot;600&quot;,&quot;Your EmailId and Password are not Accessible&quot;);</span>
+        }
+
+<span class="nc" id="L27">        Optional&lt;User&gt; existUser = repo.findByEmailid(customOath2User.getEmail()+&quot;@&quot;+customOath2User.getProviderName());</span>
+<span class="nc" id="L28">        curremail=customOath2User.getEmail()+&quot;@&quot;+customOath2User.getProviderName();</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        if(existUser.isEmpty()){</span>
+<span class="nc" id="L30">                User newUser = new User();</span>
+<span class="nc" id="L31">                newUser.setEmailid(customOath2User.getEmail()+&quot;@&quot;+customOath2User.getProviderName());</span>
+<span class="nc" id="L32">                newUser.setFirstname(customOath2User.getName());</span>
+<span class="nc" id="L33">                newUser.setEnabled(true);</span>
+<span class="nc" id="L34">                newUser.setPassword(&quot;ok&quot;);</span>
+<span class="nc" id="L35">                newUser.setProvider(Provider.valueOf(customOath2User.getProviderName()));</span>
+<span class="nc" id="L36">                System.err.println(&quot;saving new user&quot;);</span>
+<span class="nc" id="L37">                repo.save(newUser);</span>
+
+                }
+<span class="nc" id="L40">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

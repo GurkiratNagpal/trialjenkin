@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<title>Mobile Manager</title>
+
+</head>
+<body>
+<div align="center">
+
+    <h1>List of Company Bills :  </h1>
+    <h1  th:text="*{companyname}"> Company name</h1>
+    <br/><br/>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>One time cost Bill</th>
+                <th> call Bill</th>
+                <th>data Bill</th>
+                <th>sms Bill</th>
+                <th>bb Bill</th>
+                <th>total Bill</th>
+                <th>Month</th>
+                <th>Year</th>
+                <th>Click</th>
+
+            
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="object : ${invoicelist}">
+
+                <td th:text="${object.one_time_cost}">Total sms cost </td>
+                <td th:text="${object.total_call_cost}">Total sms cost </td>
+                <td th:text="${object.total_data_cost}">Total sms cost </td>
+                <td th:text="${object.total_sms_cost}">Total sms cost </td>
+                <td th:text="${object.total_bb_cost}">Total sms cost </td>
+                <td th:text="${object.total_cost}">Total sms cost </td>
+                <td th:text="${object.month}">Total sms cost </td>
+                <td th:text="${object.year}">Total sms cost </td>
+                <td><a th:href="@{/inv/__${object.id}__}">Generate Invoice</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>   
+</body>
+</html>

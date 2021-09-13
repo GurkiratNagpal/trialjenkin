@@ -1,0 +1,10 @@
+com\auth\Signing\ExceptionsTests.class
+com\auth\Signing\LoginControllerTests.class
+com\auth\Signing\EntityTests.class
+com\auth\Signing\AuthUnauthTests.class
+com\auth\Signing\CompanyServiceTests.class
+com\auth\Signing\SearchControllerTests.class
+com\auth\Signing\InvoiceServiceTests.class
+com\auth\Signing\MainControllerTests.class
+com\auth\Signing\BroadBandServiceTests.class
+com\auth\Signing\MobileServiceTests.class

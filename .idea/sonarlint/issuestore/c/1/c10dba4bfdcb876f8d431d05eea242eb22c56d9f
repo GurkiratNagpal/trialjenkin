@@ -1,0 +1,7 @@
+
+Y
+java:S53444">Don't use the default "PasswordEncoder" relying on plain-text.(”ñ†Öúÿÿÿÿ
+S	java:S106T"9Replace this use of System.out or System.err by a logger.(ó©¸üÿÿÿÿ
+R
+java:S1874€";Remove this use of "NoOpPasswordEncoder"; it is deprecated.(å‰ö
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ïéÿÿÿÿÿ

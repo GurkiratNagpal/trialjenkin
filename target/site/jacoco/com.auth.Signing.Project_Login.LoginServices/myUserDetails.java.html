@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>myUserDetails.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.Project_Login.LoginServices</a> &gt; <span class="el_source">myUserDetails.java</span></div><h1>myUserDetails.java</h1><pre class="source lang-java linenums">package com.auth.Signing.Project_Login.LoginServices;
+
+
+import com.auth.Signing.Project_Login.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+
+public class myUserDetails implements UserDetails {
+
+    @Autowired
+    transient User user;
+
+<span class="fc" id="L20">    public myUserDetails(User user){</span>
+<span class="fc" id="L21">        this.user = user;</span>
+<span class="fc" id="L22">    }</span>
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="fc" id="L26">        return Collections.singletonList(new SimpleGrantedAuthority(&quot;ROLE_USER&quot;));</span>
+    }
+
+    @Override
+    public String getPassword() {
+<span class="fc" id="L31">        return user.getPassword();</span>
+    }
+
+    @Override
+    public String getUsername() {
+<span class="fc" id="L36">        return user.getEmailid();</span>
+    }
+
+    @Bean
+<span class="fc" id="L40">    public String getPrincipalName(){return user.getFirstname();}</span>
+
+    @Override
+    public boolean isAccountNonExpired() {
+<span class="fc" id="L44">        return true;</span>
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+<span class="fc" id="L49">        return true;</span>
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+<span class="fc" id="L54">        return true;</span>
+    }
+
+    @Override
+    public boolean isEnabled() {
+<span class="fc" id="L59">        return user.isEnabled();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

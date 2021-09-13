@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<!--    <style>-->
+<!--/* (A) 3 COLUMNS ON BIG SCREENS */-->
+<!--.flexWrap {-->
+<!--  display: flex;-->
+<!--  width: 100%;-->
+<!--}-->
+<!--.flexCol {-->
+<!--  box-sizing: border-box;-->
+<!--  padding: 10px;-->
+<!--  width: 33.3%;-->
+<!--  background: #ffe2e0;-->
+<!--}-->
+<!--/* (B) BREAK DOWN 1 COLUMN ON SMALL SCREENS */-->
+<!--@media only screen and (max-width: 768px) {-->
+<!--  .flexWrap { flex-wrap: wrap; }-->
+<!--  .flexCol { width: 100%; }-->
+<!--}-->
+<!--</style>-->
+    <meta charset="utf-8"/>
+    <title>Mobile Manager</title>
+
+    <style>
+
+        table{
+            border-collapse:collapse;
+            margin:200px;
+        }
+        tr{
+        font-size: 20px;
+        }
+        tr:nth-child(even){
+
+        background-color: powderblue;
+        }
+        tr:hover{
+        background-color:yellow;
+        }
+
+        #in, but
+        {
+            height:30px;
+            size:50;
+            font-size:25pt;
+        }
+
+      button {
+      background-color: #4CAF50; /* Green */
+      border: 2px solid black;
+      color: white;
+      padding: 12px 30px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    </style>
+</head>
+<body>
+<br><br>
+
+<div align="center">
+    <div class="searchbox">
+       <h4>
+           <form th:action="@{/process_search}" th:object="${search_item}" method="post">
+            <input id="in" type="text" th:field="*{searchContent}" placeholder="Search Here" name="search">
+            <button id="but" type="submit" >Go</button>
+           </form>
+       </h4>
+
+
+    </div>
+</div>
+
+<div>
+
+<div >
+        <div class="topbilled">
+            <table style="float: left" border="1" cellpadding="10">
+                <caption><h3>Top Billed Companies</h3></caption>
+                <thead>
+                <tr>
+                    <th>Company Name </th>
+                    <th>Total Business Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="object:${TopBilled}">
+                    <td th:text="${object.key}">Company Name </td>
+                    <td th:text="${object.value}">Total</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+</div>
+
+    <div>
+        <div class="unpaid">
+            <table style="float: right" border="1" cellpadding="10">
+                <caption><h3>Unpaid Invoices</h3></caption>
+                <thead>
+                <tr>
+                    <th>Company Name </th>
+                    <th>Total Unpaid Values</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="object:${UnpaidCompanies}">
+                    <td th:text="${object.key}">Company Name </td>
+                    <td th:text="${object.value}">Total</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+
+<br>
+
+
+</body>
+</html>
+
+

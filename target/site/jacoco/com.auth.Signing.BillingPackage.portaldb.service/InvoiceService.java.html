@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.BillingPackage.portaldb.service</a> &gt; <span class="el_source">InvoiceService.java</span></div><h1>InvoiceService.java</h1><pre class="source lang-java linenums">package com.auth.Signing.BillingPackage.portaldb.service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import com.auth.Signing.BillingPackage.portaldb.entity.Broadband;
+import com.auth.Signing.BillingPackage.portaldb.entity.Company;
+import com.auth.Signing.BillingPackage.portaldb.entity.Invoice;
+import com.auth.Signing.BillingPackage.portaldb.entity.Mobile;
+import com.auth.Signing.BillingPackage.portaldb.repository.BroadbandRepository;
+import com.auth.Signing.BillingPackage.portaldb.repository.CompanyRepository;
+import com.auth.Signing.BillingPackage.portaldb.repository.InvoiceRepository;
+import com.auth.Signing.BillingPackage.portaldb.repository.MobileRepository;
+import com.auth.Signing.Project_Login.Repo.UserRepository;
+import com.auth.Signing.Project_Login.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.text.DateFormatSymbols;
+import javax.mail.internet.MimeMessage;
+import java.security.Principal;
+import java.util.List;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
+@Service
+@Transactional
+<span class="fc" id="L31">public class InvoiceService {</span>
+    @Autowired
+    private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+
+    @Autowired
+    private BroadbandRepository broadbandRepository;
+
+    @Autowired
+    private MobileRepository mobileRepository;
+
+    public void insertdata() {
+
+<span class="fc" id="L47">        int trialcount = invoiceRepository.findAll().size();</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (trialcount==0) { //any number &gt;1</span>
+<span class="fc" id="L49">            List&lt;Company&gt; companyList = companyRepository.findAll();</span>
+
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            for (Company c : companyList) {</span>
+
+<span class="fc" id="L54">                List&lt;Mobile&gt; mobileList = mobileRepository.findByCompanyid(c.getCompany_id());</span>
+<span class="fc" id="L55">                List&lt;Broadband&gt; broadbandList = broadbandRepository.findByCompanyid(c.getCompany_id());</span>
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                for (int z = 0; z &lt; mobileList.size(); z++) {</span>
+<span class="fc" id="L58">                    int total = 0;</span>
+<span class="fc" id="L59">                    Mobile m = mobileList.get(z);</span>
+<span class="fc" id="L60">                    Broadband b = broadbandList.get(z);</span>
+<span class="fc" id="L61">                    Invoice inv = new Invoice();</span>
+
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                    if (z == 0) {</span>
+<span class="fc" id="L64">                        inv.setOne_time_cost(c.getNokia() * 50</span>
+<span class="fc" id="L65">                                + c.getApple() * 300</span>
+<span class="fc" id="L66">                                + c.getSamsung() * 100</span>
+<span class="fc" id="L67">                                + c.getOneplus() * 75</span>
+<span class="fc" id="L68">                                + c.getFixed() * 50</span>
+<span class="fc" id="L69">                                + c.getBroadband() * 50</span>
+                        );
+                    } else {
+<span class="fc" id="L72">                        inv.setOne_time_cost(0);</span>
+                    }
+<span class="fc" id="L74">                    inv.setMonth(m.getMonth());</span>
+<span class="fc" id="L75">                    inv.setYear(m.getYear());</span>
+<span class="fc" id="L76">                    inv.setTotal_bb_usage((b.getData_consumption()));</span>
+<span class="fc" id="L77">                    inv.setFixed_bb_cost(105 * (c.getBroadband()) + 50 * (c.getFixed()));</span>
+                    //inv.setTotal_bb_cost(105 * (c.getBroadband()) + 50 * (c.getFixed()));
+<span class="fc" id="L79">                    inv.setTotal_call_usage(m.getCall_duration());</span>
+                    //inv.setTotal_call_cost(m.getCall_duration() * 0.2);
+<span class="fc" id="L81">                    inv.setTotal_sms_usage(m.getSms());</span>
+                    //inv.setTotal_sms_cost(m.getSms() * 0.05);
+<span class="fc" id="L83">                    inv.setCompanyname(c.getCompanyname());</span>
+                    //inv.setCompany_id(c.getCompany_id());
+<span class="fc" id="L85">                    inv.setAcc_no(c.getCompany_id());</span>
+<span class="fc" id="L86">                    inv.setStatusofinvoice(m.getStatus());</span>
+                    //inv.setTotal_data_cost(m.getData_consumption() * 0.1);
+<span class="fc" id="L88">                    inv.setTotal_data_usage(m.getData_consumption());</span>
+<span class="fc" id="L89">                    inv.setTotal_cost(</span>
+<span class="fc" id="L90">                            inv.getOne_time_cost()</span>
+<span class="fc" id="L91">                            + inv.getTotal_data_usage() *0.1</span>
+<span class="fc" id="L92">                            + inv.getTotal_call_usage()* 0.2</span>
+<span class="fc" id="L93">                            +inv.getTotal_sms_usage() * 0.05</span>
+<span class="fc" id="L94">                            +inv.getTotal_bb_usage() *0.01</span>
+<span class="fc" id="L95">                            +inv.getFixed_bb_cost()</span>
+                    );
+<span class="fc" id="L97">                    invoiceRepository.save(inv);</span>
+                }
+<span class="fc" id="L99">            }</span>
+        }
+
+
+<span class="fc" id="L103">    }</span>
+
+	public List&lt;Object[]&gt; getTopBilled() {
+
+<span class="fc" id="L107">        return  invoiceRepository.findTopBilled();</span>
+
+
+	}
+
+	public List&lt;Object[]&gt; getUnpaid() {
+<span class="fc" id="L113">        return   invoiceRepository.findUnpaid();</span>
+	}
+
+    @Autowired
+    private JavaMailSender mailSender;
+	@Autowired
+    private UserRepository userRepository;
+    public void sendinvtocompany(long invoice_id, Principal principal) throws MessagingException, UnsupportedEncodingException {
+<span class="fc" id="L121">        Invoice tobesent = invoiceRepository.findById(invoice_id).get();</span>
+<span class="fc" id="L122">        User employee = userRepository.findByEmailid(principal.getName()).get();</span>
+<span class="fc" id="L123">        String toAddress = &quot;companyhr000@gmail.com&quot;;</span>
+<span class="fc" id="L124">        String fromAddress = &quot;tbillerportal@gmail.com&quot;;</span>
+<span class="fc" id="L125">        String senderName = &quot;Telstra Billfinity&quot;;</span>
+<span class="fc" id="L126">        String subject = &quot;Invoice Details&quot;;</span>
+<span class="fc" id="L127">        String content = &quot;Dear [[name]] HR,&lt;br&gt;&quot;</span>
+                + &quot;&lt;br&gt; This is an auto-generated mail. Please do not reply! &quot;
+<span class="fc" id="L129">                + &quot;This Mail has been generated by  &quot;+ employee.getFirstname() +&quot; from Telstra Billfinity  &quot;</span>
+                + &quot;[[statusdetails]]&quot;
+                +&quot;&lt;br&gt;&lt;br&gt; Invoice details attached below: &quot;
+<span class="fc" id="L132">                +&quot;&lt;br&gt;Customer: &quot; + tobesent.getCompanyname()</span>
+<span class="fc" id="L133">                +&quot;&lt;br&gt;Generated on : &quot; +  new DateFormatSymbols().getMonths()[Integer.valueOf(tobesent.getMonth())-1] + &quot;-&quot;+ tobesent.getYear()</span>
+                +&quot; &lt;br&gt;&lt;br&gt;&lt;br&gt;Mobile Bill Details:  &quot;
+                +&quot;&lt;table&gt;\n&quot; +
+                &quot;    &lt;tr&gt;\n&quot; +
+                &quot;        &lt;th&gt;OTC&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;Call Usage&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;Call Cost&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;SMS Usage&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;SMS Cost&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;Data Usage&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;Data Cost&lt;/th&gt;\n&quot; +
+                &quot;    &lt;/tr&gt;\n&quot; +
+                &quot;    &lt;tr&gt;\n&quot; +
+<span class="fc" id="L146">                &quot;&lt;td&gt;&quot; + tobesent.getOne_time_cost() +&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L147">                &quot;&lt;td&gt;&quot; + tobesent.getTotal_call_usage() +&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L148">                &quot;&lt;td&gt;&quot; + Math.round(tobesent.getTotal_call_usage() * 0.2) +&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L149">                &quot;&lt;td&gt;&quot; + tobesent.getTotal_sms_usage() +&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L150">                &quot;&lt;td&gt;&quot; + Math.round(tobesent.getTotal_sms_usage() *0.05)+&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L151">                &quot;&lt;td&gt;&quot; + tobesent.getTotal_data_usage() +&quot;&lt;/td&gt;&quot; +</span>
+<span class="fc" id="L152">                &quot;&lt;td&gt;&quot; + Math.round(tobesent.getTotal_data_usage()*0.1)+&quot;&lt;/td&gt;&quot; +</span>
+                &quot;    &lt;/tr&gt;\n&quot; +
+                &quot;&lt;/table&gt;&quot;
+                +&quot;&lt;br&gt;&lt;br&gt;&lt;br&gt; Broadband Bill details&quot;
+                +&quot;&lt;table&gt;\n&quot; +
+                &quot;    &lt;tr&gt;\n&quot; +
+                &quot;\n&quot; +
+                &quot;        &lt;th&gt;Broadband Usage&lt;/th&gt;\n&quot; +
+                &quot;        &lt;th&gt;Broadband Fixed Charges&lt;/th&gt;\n&quot; +
+                &quot;\n&quot; +
+                &quot;    &lt;/tr&gt;\n&quot; +
+                &quot;    &lt;tr&gt;\n&quot; +
+<span class="fc" id="L164">                &quot;        &lt;td&gt;&quot;+Math.round(tobesent.getTotal_bb_usage())+ &quot;&lt;/td&gt;\n&quot; +</span>
+<span class="fc" id="L165">                &quot;        &lt;td&gt;&quot;+Math.round(tobesent.getFixed_bb_cost())+ &quot;&lt;/td&gt;\n&quot; +</span>
+                &quot;    &lt;/tr&gt;\n&quot; +
+                &quot;&lt;/table&gt;&quot;
+<span class="fc" id="L168">                +&quot;&lt;br&gt; &lt;u&gt;Total Payment Due: $&quot;+ Math.round(tobesent.getTotal_cost()) + &quot; &lt;/u&gt;&quot;</span>
+                +&quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt; &quot;
+                + &quot;Thank you, Regards,  &lt;br&gt;&quot;
+                + &quot;Telstra Billfinity.&quot;;
+
+<span class="fc" id="L173">        MimeMessage message = mailSender.createMimeMessage();</span>
+<span class="fc" id="L174">        MimeMessageHelper helper = new MimeMessageHelper(message);</span>
+
+<span class="fc" id="L176">        helper.setFrom(fromAddress, senderName);</span>
+<span class="fc" id="L177">        helper.setTo(toAddress);</span>
+<span class="fc" id="L178">        helper.setSubject(subject);</span>
+<span class="fc" id="L179">        String status=&quot;&quot;;</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if(tobesent.getStatusofinvoice().equalsIgnoreCase(&quot;Paid&quot;)){</span>
+
+<span class="nc" id="L182">            status +=&quot;as confirmation of your payment for the invoice:&quot;+ invoice_id;</span>
+
+        }
+        else{
+<span class="fc" id="L186">            status +=&quot;as a reminder of payment due for invoice:&quot;+invoice_id;</span>
+        }
+<span class="fc" id="L188">        content = content.replace(&quot;[[name]]&quot;, tobesent.getCompanyname().toUpperCase());</span>
+<span class="fc" id="L189">        content = content.replace(&quot;[[statusdetails]]&quot;, status);</span>
+<span class="fc" id="L190">        helper.setText(content, true);</span>
+<span class="fc" id="L191">        mailSender.send(message);</span>
+
+<span class="fc" id="L193">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

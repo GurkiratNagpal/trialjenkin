@@ -1,0 +1,7 @@
+
+[
+java:S4684#"@Replace this persistent entity with a simple POJO or DTO object.(·Ï‹ºûÿÿÿÿ
+S	java:S106$"9Replace this use of System.out or System.err by a logger.(‰†‘şÿÿÿÿ
+N	java:S106*"9Replace this use of System.out or System.err by a logger.(ı–ê
+N	java:S1062"9Replace this use of System.out or System.err by a logger.(û´²­
+n	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(»×Ò]

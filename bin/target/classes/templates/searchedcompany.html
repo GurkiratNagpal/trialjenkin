@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<title>Mobile Manager</title>
+</head>
+<body>
+<div align="center">
+
+
+	
+    <h1>Company List</h1>
+
+    <br/><br/>
+    <table border="1" cellpadding="10">
+        <thead>
+        
+          
+        
+            <tr>
+                <th>Company ID</th>
+                <th>Company Name</th>
+                <th>Hyperlinks</th>
+            
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="object : ${companylist}">
+                <td th:text="${object.company_id}">Service ID</td>
+                <td th:text="${object.companyname}">Company ID</td>
+                <td> <a th:href="@{/company/__${object.companyname}__}" th:text ="${object.companyname}"> Company name</a></td>
+              
+            </tr>
+        </tbody>
+    </table>
+</div>   
+</body>
+</html>

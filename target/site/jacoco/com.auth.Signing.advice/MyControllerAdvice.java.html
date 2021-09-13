@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyControllerAdvice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.advice</a> &gt; <span class="el_source">MyControllerAdvice.java</span></div><h1>MyControllerAdvice.java</h1><pre class="source lang-java linenums">package com.auth.Signing.advice;
+
+import com.auth.Signing.Exceptions.*;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
+
+@ControllerAdvice
+<span class="fc" id="L16">public class MyControllerAdvice {</span>
+
+
+    @ExceptionHandler(DuplicateEmailIdException.class)
+    public ResponseEntity&lt;String&gt; emailIdExists(DuplicateEmailIdException duplicateEmailIdException){
+
+<span class="nc" id="L22">        return new ResponseEntity&lt;&gt;(&quot;EmailID Already Registered for Local Signup !!&quot;, HttpStatus.NOT_ACCEPTABLE);</span>
+
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity&lt;String&gt; noSuchCompanyExists(NoSuchElementException noSuchElementException){
+
+<span class="fc" id="L29">        return new ResponseEntity&lt;&gt;(&quot;No Results Found !! Either Search By CompanyName or InvoiceId using format 'inv:InvoiceId' with valid Invoice Number!!&quot;, HttpStatus.NO_CONTENT);</span>
+
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity&lt;String&gt; invalidInvoiceId(NumberFormatException numberFormatException){
+
+<span class="nc" id="L36">        return new ResponseEntity&lt;&gt;(&quot;Please Enter valid search input !! Follow 'inv:InvoiceId' format, where InvoiceId is a number..!&quot;, HttpStatus.NOT_ACCEPTABLE);</span>
+
+    }
+
+    @ExceptionHandler(WrongOtpException.class)
+    public ResponseEntity&lt;String&gt; wrongotp(){
+
+<span class="nc" id="L43">        return new ResponseEntity&lt;&gt;(&quot;You've entered the wrong otp! Please Register again!&quot;, HttpStatus.EXPECTATION_FAILED);</span>
+
+    }
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity&lt;String&gt; disabled(){
+
+<span class="nc" id="L49">        return new ResponseEntity&lt;&gt;(&quot;You've not verified your email address! Please Register again!&quot;, HttpStatus.PARTIAL_CONTENT);</span>
+
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity&lt;String&gt; invalidCredentials(InvalidCredentialsException invalidCredentialsException){
+
+<span class="nc" id="L56">        return new ResponseEntity&lt;&gt;(&quot;Please Enter valid Credentials !&quot;, HttpStatus.BAD_REQUEST);</span>
+
+    }
+
+    @ExceptionHandler(InvalidSearchFormatException.class)
+    public ResponseEntity&lt;String&gt; invalidFormat(InvalidSearchFormatException invalidSearchFormatException){
+
+<span class="nc" id="L63">        return new ResponseEntity&lt;&gt;(&quot;Invalid Search Format !! Use 'inv:InvoiceId' format to search using Invoice Id&quot;, HttpStatus.NOT_ACCEPTABLE);</span>
+
+    }
+
+    @ExceptionHandler(SocialDetailsInaccessible.class)
+    public ResponseEntity&lt;String&gt; inaccessibleDetails(){
+<span class="nc" id="L69">        return  new ResponseEntity&lt;&gt;(&quot;Your details are inaccessible! Please make your profile Public&quot;, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity&lt;String&gt; ioException(){
+<span class="nc" id="L74">        return  new ResponseEntity&lt;&gt;(&quot;IO exception incurred&quot;, HttpStatus.EXPECTATION_FAILED);</span>
+
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity&lt;String&gt; badcreds(){
+<span class="nc" id="L80">        return  new ResponseEntity&lt;&gt;(&quot;You entered the wrong credentials! :(&quot;, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;String&gt; exception(){
+<span class="nc" id="L85">        return  new ResponseEntity&lt;&gt;(&quot; OOps! exception incurred&quot;, HttpStatus.EXPECTATION_FAILED);</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

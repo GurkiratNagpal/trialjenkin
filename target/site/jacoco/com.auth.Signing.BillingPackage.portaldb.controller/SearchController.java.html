@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SearchController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.BillingPackage.portaldb.controller</a> &gt; <span class="el_source">SearchController.java</span></div><h1>SearchController.java</h1><pre class="source lang-java linenums">package com.auth.Signing.BillingPackage.portaldb.controller;
+
+
+import com.auth.Signing.BillingPackage.portaldb.entity.Company;
+import com.auth.Signing.BillingPackage.portaldb.entity.Invoice;
+import com.auth.Signing.BillingPackage.portaldb.repository.CompanyRepository;
+import com.auth.Signing.BillingPackage.portaldb.repository.InvoiceRepository;
+import com.auth.Signing.BillingPackage.portaldb.service.InvoiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+@RestController
+@CrossOrigin(&quot;*&quot;)
+<span class="fc" id="L22">public class SearchController {</span>
+
+    @Autowired
+    InvoiceRepository invoiceRepository;
+    @Autowired
+    CompanyRepository companyRepository;
+
+
+    @GetMapping(&quot;/portal/search/inv/{invno}&quot;)
+    public Invoice searchInvoice(@PathVariable(&quot;invno&quot;) String invoicenumber) {
+<span class="fc" id="L32">        System.err.println(invoicenumber);</span>
+<span class="fc" id="L33">        Long invoice_no = Long.parseLong((invoicenumber));</span>
+<span class="fc" id="L34">        Optional&lt;Invoice&gt; foundInv = invoiceRepository.findById(invoice_no);</span>
+<span class="pc" id="L35">        foundInv.orElseThrow(() -&gt; new NoSuchElementException());</span>
+<span class="nc" id="L36">        System.err.println(&quot;Returning&quot;+ foundInv.get());</span>
+<span class="nc" id="L37">        return foundInv.get();</span>
+    }
+
+    @GetMapping(&quot;/portal/search/company/{cname}&quot;)
+    public List&lt;Company&gt; viewCompanies(@PathVariable(&quot;cname&quot;) String c_name) {
+<span class="fc" id="L42">        List&lt;Company&gt; companyList = companyRepository.findByCompanynameContaining(c_name);</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (companyList.isEmpty()) {</span>
+<span class="nc" id="L44">            throw new NoSuchElementException(&quot;No value present&quot;);</span>
+        }
+<span class="fc" id="L46">        System.err.println(&quot;Returning&quot;+ companyList);</span>
+<span class="fc" id="L47">        return  companyList;</span>
+    }
+
+    @GetMapping(&quot;/portal/search/compinv/{comname}&quot;)
+    public List&lt;Invoice&gt; viewOneCompany(@PathVariable(&quot;comname&quot;) String compname) {
+<span class="fc" id="L52">        List&lt;Invoice&gt; invoiceList = invoiceRepository.findByCompanyname(compname);</span>
+<span class="fc" id="L53">        System.err.println(&quot;Yeh dekho company&quot; + compname);</span>
+<span class="fc" id="L54">        invoiceList.forEach(System.err::println);</span>
+<span class="fc" id="L55">        return invoiceList;</span>
+    }
+
+    @Autowired
+    InvoiceService invoiceService;
+    @GetMapping(&quot;/portal/inv/mail/{id}&quot;)
+    public void sendmailinv(@PathVariable(&quot;id&quot;) long invoice_id, Principal principal) throws MessagingException, UnsupportedEncodingException {
+<span class="fc" id="L62">        invoiceService.sendinvtocompany(invoice_id, principal);</span>
+<span class="fc" id="L63">    }</span>
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControllerServicesImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.Project_Login.LoginServices</a> &gt; <span class="el_source">ControllerServicesImpl.java</span></div><h1>ControllerServicesImpl.java</h1><pre class="source lang-java linenums">package com.auth.Signing.Project_Login.LoginServices;
+
+import com.auth.Signing.Exceptions.DuplicateEmailIdException;
+import com.auth.Signing.Exceptions.WrongOtpException;
+import com.auth.Signing.Project_Login.Repo.UserRepository;
+
+import com.auth.Signing.Project_Login.entity.Provider;
+import com.auth.Signing.Project_Login.entity.User;
+import com.auth.Signing.Project_Login.entity.UserLogin;
+import com.auth.Signing.Project_Login.entity.otpVerif;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L28">public class ControllerServicesImpl implements ControllerServices {</span>
+    @Autowired
+    UserRepository
+            userRepository;
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    myUserDetailsService myuds;
+   public void sendVerificationEmail(User user) throws UnsupportedEncodingException, MessagingException {
+<span class="fc" id="L38">        String toAddress = user.getEmailid();</span>
+<span class="fc" id="L39">        String fromAddress = &quot;tbillerportal@gmail.com&quot;;</span>
+<span class="fc" id="L40">        String senderName = &quot;Telstra Billfinity&quot;;</span>
+<span class="fc" id="L41">        String subject = &quot;Please verify your registration with Telstra's Billfinity&quot;;</span>
+<span class="fc" id="L42">        String content = &quot;Dear [[name]],&lt;br&gt;&quot;</span>
+                + &quot;&lt;br&gt;&quot;
+<span class="fc" id="L44">                + &quot;Please verify your address using this verification code: &quot; + user.getVerificationCode()</span>
+                +&quot;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt; Do not share this with anybody!  &quot;
+                + &quot;Thank you, Regards,  &lt;br&gt;&quot;
+                + &quot;Telstra Billfinity.&quot;;
+
+<span class="fc" id="L49">        MimeMessage message = mailSender.createMimeMessage();</span>
+<span class="fc" id="L50">        MimeMessageHelper helper = new MimeMessageHelper(message);</span>
+
+<span class="fc" id="L52">        helper.setFrom(fromAddress, senderName);</span>
+<span class="fc" id="L53">        helper.setTo(toAddress);</span>
+<span class="fc" id="L54">        helper.setSubject(subject);</span>
+
+<span class="fc" id="L56">        content = content.replace(&quot;[[name]]&quot;, user.getFirstname()+ &quot; &quot;+ user.getLastname());</span>
+
+<span class="fc" id="L58">        helper.setText(content, true);</span>
+
+<span class="fc" id="L60">        mailSender.send(message);</span>
+<span class="fc" id="L61">    }</span>
+
+    @Override
+    public void verifyotp(otpVerif otp) {
+
+<span class="nc" id="L66">        Optional&lt;User&gt; verified = userRepository.findByVerificationCode(otp.getOtp());</span>
+<span class="nc" id="L67">        verified.orElseThrow(() -&gt; new WrongOtpException(&quot;  &quot;));</span>
+<span class="nc" id="L68">        System.err.println(&quot;Correct otp? &quot;+ otp.getOtp().equalsIgnoreCase(verified.get().getVerificationCode()) );</span>
+<span class="nc" id="L69">        System.err.println(&quot;User &quot; + verified.get().getEmailid());</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (otp.getOtp().equalsIgnoreCase(verified.get().getVerificationCode())) {</span>
+<span class="nc" id="L71">            verified.get().setVerificationCode(null);</span>
+<span class="nc" id="L72">            verified.get().setEnabled(true);</span>
+<span class="nc" id="L73">            userRepository.save(verified.get());</span>
+        }
+        else{
+<span class="nc" id="L76">            throw new WrongOtpException(&quot;&quot;);</span>
+        }
+<span class="nc" id="L78">    }</span>
+
+
+    @Override
+    public void processregistration(User user) throws MessagingException, UnsupportedEncodingException {
+<span class="fc" id="L83">        Optional&lt;User&gt; optionalUser = userRepository.findByLocalEmailid(user.getEmailid());</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (optionalUser.isEmpty()) {</span>
+
+
+<span class="fc" id="L87">            String randomCode = RandomStringUtils.randomAlphanumeric(7);</span>
+<span class="fc" id="L88">            System.out.println(randomCode+ &quot;$$$&quot;) ;</span>
+<span class="fc" id="L89">            user.setVerificationCode(randomCode);</span>
+<span class="fc" id="L90">            user.setEnabled(false);</span>
+
+<span class="fc" id="L92">            user.setProvider(Provider.local);</span>
+<span class="fc" id="L93">            userRepository.save(user);</span>
+<span class="fc" id="L94">            sendVerificationEmail(user);</span>
+<span class="fc" id="L95">        } else {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (!optionalUser.get().isEnabled()){</span>
+<span class="nc" id="L97">                String randomCode = RandomStringUtils.randomAlphanumeric(7);</span>
+<span class="nc" id="L98">                System.err.println(randomCode+ &quot;$$$&quot;) ;</span>
+<span class="nc" id="L99">                user.setVerificationCode(randomCode);</span>
+<span class="nc" id="L100">                user.setEnabled(false);</span>
+<span class="nc" id="L101">                userRepository.delete(optionalUser.get());</span>
+<span class="nc" id="L102">                user.setProvider(Provider.local);</span>
+<span class="nc" id="L103">                userRepository.save(user);</span>
+<span class="nc" id="L104">                sendVerificationEmail(user);</span>
+<span class="nc" id="L105">            }</span>
+            else {
+<span class="nc" id="L107">                throw new DuplicateEmailIdException(&quot;600&quot;, &quot;This Email Id already exists!&quot;);</span>
+            }
+        }
+<span class="fc" id="L110">    }</span>
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Override
+    public String processlogin(UserLogin userLogin) throws BadCredentialsException, DisabledException {
+<span class="fc" id="L116">        SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(</span>
+                    new UsernamePasswordAuthenticationToken(
+<span class="fc" id="L118">                            userLogin.getEmailid_login(),</span>
+<span class="fc" id="L119">                            userLogin.getPassword_login()</span>
+                    )));
+
+
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof CustomOath2User) {</span>
+<span class="nc" id="L124">            CustomOath2User curruser = (CustomOath2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();</span>
+<span class="nc" id="L125">            System.err.println(&quot;returning&quot; + curruser.getName());</span>
+<span class="nc" id="L126">            return curruser.getName();</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        } else if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof myUserDetails) {</span>
+<span class="fc" id="L128">            myUserDetails curruser = (myUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();</span>
+<span class="fc" id="L129">            System.err.println(&quot;returning&quot; + curruser.getPrincipalName());</span>
+<span class="fc" id="L130">            return curruser.getPrincipalName();</span>
+        }
+<span class="nc" id="L132">        return  &quot;Stranger&quot;;</span>
+    }
+
+
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

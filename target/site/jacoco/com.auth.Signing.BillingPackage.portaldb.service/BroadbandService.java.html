@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BroadbandService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Signing</a> &gt; <a href="index.source.html" class="el_package">com.auth.Signing.BillingPackage.portaldb.service</a> &gt; <span class="el_source">BroadbandService.java</span></div><h1>BroadbandService.java</h1><pre class="source lang-java linenums">package com.auth.Signing.BillingPackage.portaldb.service;
+
+import com.auth.Signing.BillingPackage.portaldb.entity.Broadband;
+import com.auth.Signing.BillingPackage.portaldb.repository.BroadbandRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional
+<span class="fc" id="L14">public class BroadbandService {</span>
+	@Autowired
+	private BroadbandRepository repo;
+
+	public List&lt;Broadband&gt; listAll() {
+<span class="fc" id="L19">		return repo.findAll();</span>
+	}
+
+	public void save(Broadband broadband) {
+<span class="fc" id="L23">		repo.save(broadband);</span>
+<span class="fc" id="L24">	}</span>
+
+	public Broadband get(long id) {
+<span class="fc" id="L27">		Optional&lt;Broadband&gt; br= Optional.of(repo.findById(id).get());</span>
+<span class="fc" id="L28">		return br.get();</span>
+	}
+
+	public void delete(long id) {
+<span class="nc" id="L32">		repo.deleteById(id);</span>
+<span class="nc" id="L33">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
